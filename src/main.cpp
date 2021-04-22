@@ -2,8 +2,7 @@
 
 
 
-// Kontroliranje gimbala za diplomski 
-ver1.0
+// Kontroliranje gimbala za diplomski ver1.0
 
 
 int stepPin = 4;
