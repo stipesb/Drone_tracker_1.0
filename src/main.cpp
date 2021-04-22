@@ -1,5 +1,11 @@
 #include <Arduino.h>
 
+
+
+// Kontroliranje gimbala za diplomski 
+ver1.0
+
+
 int stepPin = 4;
 int dirPin = 5;
 
@@ -40,9 +46,6 @@ void loop() {
     delayMicroseconds(100);
   }
   delay(1000);
-
-
-
 
 
 }
