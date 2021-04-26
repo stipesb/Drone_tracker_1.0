@@ -10,3 +10,5 @@ void klik();
 void tick();
 };
 #endif
+
+//3

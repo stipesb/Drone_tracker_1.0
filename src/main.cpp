@@ -8,7 +8,7 @@ int stepPin = 4;
 int dirPin = 5;
 
 
-
+//2
 void setup() {
   /*
   for(int i = 3; i<11; i++)
