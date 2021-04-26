@@ -39,4 +39,4 @@ void vector_control::klik(){
 }
 void vector_control::tick(){
 
-}
+}//tt
