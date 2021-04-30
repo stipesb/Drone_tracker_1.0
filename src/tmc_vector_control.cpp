@@ -1,5 +1,17 @@
 #include "tmc_vector_control.h"
-//3
+// definiranje pinova stepper modula
+#define Driver1Dir 4
+#define Driver1Step 5
+
+#define Driver2Dir 6
+#define Driver2Step 7
+
+#define Driver3Dir 8
+#define Driver3Step 9
+
+#define MS1 2
+#define MS2 3
+
 
 int a = 0;
 int timer = 0;
@@ -10,20 +22,17 @@ vector_control::~vector_control(){
 }
 void vector_control::SetupZaBrojac(){     
 
-  for(int i = 3; i<11; i++)  // postavljanje pinova 3-10 kao output
+  for(int i = 2; i<10; i++)  // postavljanje pinova 3-10 kao output
 {
   pinMode(i,OUTPUT); 
   delay(5);
   digitalWrite(i,LOW);
 }
 
-digitalWrite(9,HIGH);   //MS 1 pin
-digitalWrite(10,HIGH); //MS 2  pin
-digitalWrite(8,LOW);   // EN pin, (low) za aktivirat driver (HIGH) za deaktivirat driver
-
+digitalWrite(MS1,HIGH);   //MS 1 pin
+digitalWrite(MS2,HIGH); //MS 2  pin
 
 delay(10);
-
 
 
   noInterrupts();
@@ -41,4 +50,36 @@ void vector_control::klik(){
 }
 void vector_control::tick(){
 
-}//tt
+}
+
+void vector_control::test()
+{
+   digitalWrite(Driver1Dir,HIGH);
+ digitalWrite(Driver2Dir,HIGH);
+ digitalWrite(Driver3Dir,HIGH);
+ for(int x = 0; x < 2000; x++) {
+delayMicroseconds(2000);
+    digitalWrite(Driver1Step,HIGH);
+     digitalWrite(Driver2Step,HIGH);
+     digitalWrite(Driver3Step,HIGH);
+delayMicroseconds(10);
+digitalWrite(Driver3Step,LOW);
+     digitalWrite(Driver1Step,LOW);
+     digitalWrite(Driver2Step,LOW);
+ }
+
+    digitalWrite(Driver1Dir,LOW);
+ digitalWrite(Driver2Dir,LOW);
+ digitalWrite(Driver3Dir,LOW);
+ for(int x = 0; x < 2000; x++) {
+delayMicroseconds(2000);
+    digitalWrite(Driver1Step,HIGH);
+     digitalWrite(Driver2Step,HIGH);
+      digitalWrite(Driver3Step,HIGH);
+delayMicroseconds(10);
+     digitalWrite(Driver1Step,LOW);
+     digitalWrite(Driver2Step,LOW);
+     digitalWrite(Driver3Step,LOW);
+ }
+
+}
