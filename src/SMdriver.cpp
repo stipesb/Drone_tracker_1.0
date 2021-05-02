@@ -49,11 +49,48 @@ delay(10);
   TCCR1B |= ((1 << CS12) | (1 << CS10));  //1024 prescaler
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
   interrupts();             // enable all interrupts
+
+
+  
+  Serial.begin(9600);
+      Serial.setTimeout(1);
+
 }
 void vector_control::klik(){
 
 }
-void vector_control::tick(){
+void vector_control::tick(int brzina_x, int brzina_y){
+if(brzina_x >0)
+{
+digitalWrite(Driver1Dir,HIGH);
+}
+else{
+digitalWrite(Driver1Dir,HIGH);
+}
+if(brzina_y >0)
+{
+digitalWrite(Driver2Dir,HIGH);
+}
+else{
+digitalWrite(Driver2Dir,HIGH);
+}
+
+
+
+ for(int x = 0; x < 2000; x++) {
+delayMicroseconds(2000);
+
+     digitalWrite(Driver1Step,HIGH);
+          digitalWrite(Driver1Step,HIGH);
+delayMicroseconds(10);
+digitalWrite(Driver2Step,LOW);
+digitalWrite(Driver2Step,LOW);
+ }
+
+
+
+
+
 
 }
 
