@@ -8,7 +8,7 @@ vector_control();
 ~vector_control();
 void SetupZaBrojac();
 void klik();
-void tick();
+void tick(int x, int y);
 void test();
 };
 #endif
