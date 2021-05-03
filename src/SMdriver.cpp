@@ -19,7 +19,8 @@ smjera struje
 
 
 int a = 0;
-int timer = 0;
+int timerx = 0;
+int timery = 0;
 //////////////////////////////////////
 vector_control::vector_control(){
 }
@@ -44,9 +45,12 @@ delay(10);
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1  = 0;
-  OCR1A = 15624;            // compare match register 16MHz/(256/2Hz)
+  OCR1A = 319;            // frekvencija interrupta 50kHz, svakih 20us
+                             //compare match register = [ 16,000,000Hz/ (prescaler * desired interrupt frequency) ] - 1
   TCCR1B |= (1 << WGM12);   // CTC mode
-  TCCR1B |= ((1 << CS12) | (1 << CS10));  //1024 prescaler
+ // TCCR1B |= ((1 << CS12) | (1 << CS10));  //1024 prescaler
+  
+  TCCR1B |= (1 << CS10);  // prescaler = 1, velika frekvencija timera
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
   interrupts();             // enable all interrupts
 
@@ -59,40 +63,64 @@ delay(10);
 void vector_control::klik(){
 
 }
-void vector_control::tick(int brzina_x, int brzina_y){
+
+
+void vector_control::tick(int brzina_x, int brzina_y)
+{
 if(brzina_x >0)
 {
 digitalWrite(Driver1Dir,HIGH);
 }
-else{
-digitalWrite(Driver1Dir,HIGH);
+else
+{
+digitalWrite(Driver1Dir,LOW);
 }
 if(brzina_y >0)
 {
 digitalWrite(Driver2Dir,HIGH);
 }
-else{
-digitalWrite(Driver2Dir,HIGH);
+else
+{
+digitalWrite(Driver2Dir,LOW);
 }
 
 
-
- for(int x = 0; x < 2000; x++) {
-delayMicroseconds(2000);
-
-     digitalWrite(Driver1Step,HIGH);
-          digitalWrite(Driver1Step,HIGH);
-delayMicroseconds(10);
-digitalWrite(Driver2Step,LOW);
-digitalWrite(Driver2Step,LOW);
+if(digitalRead(Driver1Step))
+{
+  digitalWrite(Driver1Step,LOW);
+ }
+if(digitalRead(Driver2Step))
+{
+  digitalWrite(Driver2Step,LOW);
  }
 
 
 
 
+timerx = timerx+20;
+
+if(timerx>brzina_x)
+{
+digitalWrite(Driver1Step,HIGH);
+timerx = 0;
+}
+
+timery = timery+20;
+
+if(timery>brzina_y)
+{
+digitalWrite(Driver2Step,HIGH);
+timery = 0;
+}
+
 
 
 }
+
+
+
+
+
 
 void vector_control::test()
 {
