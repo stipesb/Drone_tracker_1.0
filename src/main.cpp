@@ -4,84 +4,72 @@
 vector_control konstrct;
 
 
+int c = 2000;  // x os
+int b = 2000;  // y os
+
 const byte numChars = 32;
 char receivedChars[numChars];
+
 boolean newData = false;
 
 
-int b = 500;
-int c = 500;
-
 void setup() {
-  
  konstrct.SetupZaBrojac();
+ Serial.begin(9600);
+ Serial.setTimeout(10);
+
 }
 
-void loop() {
-
-
-//usbPrijem();
-
-
-//ovde ide konverzija iz stringa u int x i int y
-
-
-
-
-
-} 
-
-void usbPrijem()
-{
-
+void recvWithStartEndMarkers() {
+    static boolean recvInProgress = false;
     static byte ndx = 0;
-    char endMarker = '\n';
+    char startMarker = '<';
+    char endMarker = '>';
     char rc;
-    
+
     while (Serial.available() > 0 && newData == false) {
         rc = Serial.read();
 
-        if (rc != endMarker) {
-            receivedChars[ndx] = rc;
-            ndx++;
-            if (ndx >= numChars) {
-                ndx = numChars - 1;
+        if (recvInProgress == true) {
+            if (rc != endMarker) {
+                receivedChars[ndx] = rc;
+                ndx++;
+                if (ndx >= numChars) {
+                    ndx = numChars - 1;
+                }
+            }
+            else {
+                receivedChars[ndx] = '\0'; // terminate the string
+                recvInProgress = false;
+                ndx = 0;
+                newData = true;
             }
         }
-        else {
-            receivedChars[ndx] = '\0'; // terminate the string
-            ndx = 0;
-            newData = true;
+
+        else if (rc == startMarker) {
+            recvInProgress = true;
         }
     }
-
 }
 
-void stringToInt()
-{
-if(newData == true)
-{
-    char t[10];
-    char f[10];
-     char k = ' ';
-
-for(int i = 0; i>sizeof(receivedChars)  ;   i++   )
-{
- 
- if(receivedChars[i] != ' ')
- t[i] = receivedChars[i];
- else
- f[i]=receivedChars[i];
+void showNewData() {
+    if (newData == true) {
+        Serial.println(receivedChars);
+        newData = false;
+    }
 }
+void loop() {
+recvWithStartEndMarkers();
+    showNewData();
 
-b = atoi(t);
-c = atoi(f);
-
+    if(receivedChars[2] == 'w')
+    {
+digitalWrite(LED_BUILTIN,HIGH);
+    }
 }
 
 
 
-}
 
 
 
@@ -92,7 +80,4 @@ ISR(TIMER1_COMPA_vect)    //rutina koja poziva timer da pozove funkcije izmedju 
                           // timer compare interrupt service routine
 {
 konstrct.tick(b,c);
-    
-
 }
-

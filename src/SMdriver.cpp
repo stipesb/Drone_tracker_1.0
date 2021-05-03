@@ -56,9 +56,7 @@ delay(10);
 
 
   
-  Serial.begin(9600);
-      Serial.setTimeout(1);
-
+  
 }
 void vector_control::klik(){
 
@@ -69,11 +67,12 @@ void vector_control::tick(int brzina_x, int brzina_y)
 {
 if(brzina_x >0)
 {
-digitalWrite(Driver1Dir,HIGH);
+digitalWrite(Driver1Dir,LOW);
 }
 else
 {
-digitalWrite(Driver1Dir,LOW);
+digitalWrite(Driver1Dir,HIGH);
+brzina_x = -brzina_x;
 }
 if(brzina_y >0)
 {
@@ -82,6 +81,7 @@ digitalWrite(Driver2Dir,HIGH);
 else
 {
 digitalWrite(Driver2Dir,LOW);
+brzina_y = -brzina_y;
 }
 
 
