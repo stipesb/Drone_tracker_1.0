@@ -20,7 +20,7 @@ void setup() {
 
 }
 
-void recvWithStartEndMarkers() {
+void recvWithStartEndMarkers() {    // ne radi jos kako treba
     static boolean recvInProgress = false;
     static byte ndx = 0;
     char startMarker = '<';
