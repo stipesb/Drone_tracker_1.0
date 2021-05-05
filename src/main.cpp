@@ -4,8 +4,9 @@
 vector_control konstrct;
 
 
-int c = 2000;  // x os
-int b = 2000;  // y os
+
+int k1 = 500;// x os
+int k2 = 500; // y os
 
 const byte numChars = 32;
 char receivedChars[numChars];
@@ -13,13 +14,14 @@ char receivedChars[numChars];
 boolean newData = false;
 
 
+
+
 void setup() {
  konstrct.SetupZaBrojac();
- Serial.begin(9600);
- Serial.setTimeout(10);
+ Serial.begin(115200);
+ Serial.setTimeout(20);
 
 }
-
 void recvWithStartEndMarkers() {    // ne radi jos kako treba
     static boolean recvInProgress = false;
     static byte ndx = 0;
@@ -50,34 +52,55 @@ void recvWithStartEndMarkers() {    // ne radi jos kako treba
             recvInProgress = true;
         }
     }
+
+
+ if (newData == true)
+   {
+  
+char brojX[33] = "";
+char brojY[33] = "";
+int t = 0;
+int kt = 0;
+
+for( int k = 0; k < 33; k++  )  // provjerava svaki element primljenog charasizeof(receivedChars)
+{                                             
+    if(receivedChars[k]!= ' ' && t == 0)   // ako naidje na razmak, prebacuje char na drugu varijablu
+    {                                      
+brojX[k] = receivedChars[k];               
+    }
+    else
+    {
+        t = 1;
+    }
+    
+    if(t == 1 && receivedChars[k]!= ' ' )
+    {
+     brojY[kt] = receivedChars[k];
+     kt++;
+    }
+      // ovaj kod gleda gdje je razmak u primljenom podatku, te ga u odnosu na taj razmak
+      // dijeli na 2 chara, char prije razmaka i char posle razmaka
+
+
 }
 
-void showNewData() {
-    if (newData == true) {
-        Serial.println(receivedChars);
-        newData = false;
-    }
+k1 = atoi(brojX);  // ova funkcija prebacuje char u integer
+k2 = atoi(brojY);  // integer ide do +-32768  možda bude potreban veći format broja (long)
+  newData = false;
+  }
+
 }
+
+
 void loop() {
 recvWithStartEndMarkers();
-    showNewData();
-
-    if(receivedChars[2] == 'w')
-    {
-digitalWrite(LED_BUILTIN,HIGH);
-    }
+ 
 }
-
-
-
-
-
-
 
 
 
 ISR(TIMER1_COMPA_vect)    //rutina koja poziva timer da pozove funkcije izmedju viticastih zagrada svako onoliko vremena koji je određen prescalerima      
                           // timer compare interrupt service routine
 {
-konstrct.tick(b,c);
+konstrct.tick(k2,k1);
 }

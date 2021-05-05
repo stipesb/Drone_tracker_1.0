@@ -45,7 +45,7 @@ delay(10);
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1  = 0;
-  OCR1A = 319;            // frekvencija interrupta 50kHz, svakih 20us
+  OCR1A = 800;            // frekvencija interrupta 50kHz, svakih 20us   319
                              //compare match register = [ 16,000,000Hz/ (prescaler * desired interrupt frequency) ] - 1
   TCCR1B |= (1 << WGM12);   // CTC mode
  // TCCR1B |= ((1 << CS12) | (1 << CS10));  //1024 prescaler
@@ -83,6 +83,9 @@ else
 digitalWrite(Driver2Dir,LOW);
 brzina_y = -brzina_y;
 }
+
+brzina_x = 6500 - brzina_x*10;
+brzina_y = 6500 - brzina_y*6;
 
 
 if(digitalRead(Driver1Step))
