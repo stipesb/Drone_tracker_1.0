@@ -86,8 +86,8 @@ digitalWrite(Driver2Dir,LOW);
 brzina_y = -brzina_y;
 }
 
-brzina_x = 6500 - brzina_x*10;
-brzina_y = 6500 - brzina_y*6;
+brzina_x = 30000 - brzina_x*25;
+brzina_y = 30000 - brzina_y*25;
 
 
 if(digitalRead(Driver1Step))
