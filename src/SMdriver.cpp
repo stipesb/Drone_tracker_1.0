@@ -90,7 +90,7 @@ brzina_x = 30000 - brzina_x*25;   // P regulator, najmanja brzina je 30000 impul
 brzina_y = 30000 - brzina_y*25;
 
 
-if(digitalRead(Driver1Step))
+if(digitalRead(Driver1Step))   // mislim da može i bez ovog uvjeta
 {
   digitalWrite(Driver1Step,LOW);
  }
@@ -100,8 +100,8 @@ if(digitalRead(Driver2Step))
  }
 
 
-
-
+if(brzina_x<29500)
+{
 
 timerx = timerx+50;
 
@@ -111,6 +111,12 @@ digitalWrite(Driver1Step,HIGH);
 timerx = 0;
 }
 
+}
+
+
+if(brzina_y<29500)
+{
+
 timery = timery+50;
 
 if(timery>brzina_y)
@@ -119,6 +125,8 @@ digitalWrite(Driver2Step,HIGH);
 
 timery = 0;
 }
+}
+
 
 
 
