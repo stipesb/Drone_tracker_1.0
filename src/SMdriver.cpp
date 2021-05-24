@@ -86,8 +86,8 @@ digitalWrite(Driver2Dir,LOW);
 brzina_y = -brzina_y;
 }
 
-brzina_x = 30000 - brzina_x*25;   // P regulator, najmanja brzina je 30000 impuls na motor svakih 30 000 us.
-brzina_y = 30000 - brzina_y*25;
+brzina_x = 30000 - brzina_x*50;   // P regulator, najmanja brzina je 30000 impuls na motor svakih 30 000 us.
+brzina_y = 30000 - brzina_y*50;
 
 
 if(digitalRead(Driver1Step))   // mislim da može i bez ovog uvjeta
@@ -137,7 +137,7 @@ timery = 0;
 
 
 
-void vector_control::test()
+void vector_control::test()  // ova funkcija samo pokrene motore da se vidi njihov rad
 {
    digitalWrite(Driver1Dir,HIGH);
  digitalWrite(Driver2Dir,HIGH);

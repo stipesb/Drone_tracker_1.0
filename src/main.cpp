@@ -5,8 +5,8 @@ vector_control konstrct;
 
 
 
-int k1 = 500;// x os
-int k2 = 500; // y os
+int k1 = 0;// x os
+int k2 = 0; // y os
 
 const byte numChars = 32;
 char receivedChars[numChars];
