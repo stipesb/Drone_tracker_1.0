@@ -5,8 +5,8 @@ vector_control konstrct;
 
 
 
-int k1 = 500;// x os
-int k2 = 500; // y os
+int k1 = 0;// x os
+int k2 = 0; // y os
 
 const byte numChars = 32;
 char receivedChars[numChars];
@@ -17,6 +17,7 @@ boolean newData = false;
 
 
 void setup() {
+     
  konstrct.SetupZaBrojac();
  Serial.begin(115200);
  Serial.setTimeout(20);
@@ -93,7 +94,8 @@ k2 = atoi(brojY);  // integer ide do +-32768  možda bude potreban veći format 
 
 
 void loop() {
-recvWithStartEndMarkers();
+
+recvWithStartEndMarkers();  //   <123 366>
  
 }
 
@@ -102,5 +104,5 @@ recvWithStartEndMarkers();
 ISR(TIMER1_COMPA_vect)    //rutina koja poziva timer da pozove funkcije izmedju viticastih zagrada svako onoliko vremena koji je određen prescalerima      
                           // timer compare interrupt service routine
 {
-konstrct.tick(k2,k1);
+konstrct.tick(k2,k1);   
 }
