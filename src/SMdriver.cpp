@@ -86,21 +86,19 @@ digitalWrite(Driver2Dir,LOW);
 brzina_y = -brzina_y;
 }
 
-brzina_x = 30000 - brzina_x*50;   // P regulator, najmanja brzina je 30000 impuls na motor svakih 30 000 us.
-brzina_y = 30000 - brzina_y*50;
+brzina_x = 6000 - brzina_x*10;   // P regulator, najmanja brzina je 6000 impuls na motor svakih 30 000 us.
+brzina_y = 6000 - brzina_y*10;
 
 
-if(digitalRead(Driver1Step))   // mislim da može i bez ovog uvjeta
-{
+
   digitalWrite(Driver1Step,LOW);
- }
-if(digitalRead(Driver2Step))
-{
+ 
   digitalWrite(Driver2Step,LOW);
- }
+ 
 
 
-if(brzina_x<29500)
+if(brzina_x<5700)  // ovo radi mrtvu zonu kad je dron centriran npr ako je dron 20pixela oko x osi, i ako uracunamo gain sa 89 linije koda
+                   // tako da dobijemo racunicu 6000 - 20*10  rezultat je 5800,    sa tim rezultatom if uvjet nije zadovoljen i gimbal se nece gibat
 {
 
 timerx = timerx+50;
@@ -114,7 +112,7 @@ timerx = 0;
 }
 
 
-if(brzina_y<29500)
+if(brzina_y<5700)
 {
 
 timery = timery+50;
@@ -126,8 +124,6 @@ digitalWrite(Driver2Step,HIGH);
 timery = 0;
 }
 }
-
-
 
 
 }
