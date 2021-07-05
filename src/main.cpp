@@ -8,7 +8,7 @@ vector_control konstrct;
 int k1 = 0;// x os
 int k2 = 0; // y os
 
-const byte numChars = 32;
+const byte numChars = 32;    // varijable za primanje podataka na serijski port
 char receivedChars[numChars];
 
 boolean newData = false;
@@ -18,12 +18,12 @@ boolean newData = false;
 
 void setup() {
      
- konstrct.SetupZaBrojac();
- Serial.begin(115200);
- Serial.setTimeout(20);
+ konstrct.SetupZaBrojac();  // pozivanje funkcije za postavljanje tajmera
+ Serial.begin(115200);      // pozivanje funkcije za serijsku komunikaciju
+ Serial.setTimeout(20);     // vrijeme cekanja za primanje varijabli serijske komunikacije
 
 }
-void recvWithStartEndMarkers() {    // ne radi jos kako treba
+void recvWithStartEndMarkers() {    
     static boolean recvInProgress = false;
     static byte ndx = 0;
     char startMarker = '<';

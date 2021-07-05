@@ -77,17 +77,29 @@ brzina_x = -brzina_x;              // prebacuje brzinu na pozitivan predznak, ra
 if(brzina_y >0)
 {
 digitalWrite(Driver2Dir,HIGH);
-
 }
 else
 {
 digitalWrite(Driver2Dir,LOW);
 
 brzina_y = -brzina_y;
+
 }
 
+
+
 brzina_x = 6000 - brzina_x*10;   // P regulator, najmanja brzina je 6000 impuls na motor svakih 30 000 us.
-brzina_y = 6000 - brzina_y*10;
+brzina_y = 6000 - brzina_y*10;  // što je manji broj to je veća brzina
+
+if(brzina_x < 100 ) // prva zona sa manjim gainom, kad se dron nalazi 100piksela udaljen od centra
+{
+brzina_x = 30000 - brzina_x*100;
+}
+else if(brzina_x<300)
+{
+brzina_x = 10000 - brzina_x*10;
+
+}
 
 
 
