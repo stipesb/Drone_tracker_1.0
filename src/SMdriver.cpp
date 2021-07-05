@@ -50,7 +50,7 @@ delay(10);
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1  = 0;
-  OCR1A = 800;            // frekvencija interrupta 20kHz  50us,      (za svakih 20us  OCF1A = 319)
+  OCR1A = 800;               // frekvencija interrupta 20kHz  50us,      (za svakih 20us  OCF1A = 319)
                              //compare match register = [ 16,000,000Hz/ (prescaler * desired interrupt frequency) ] - 1
   TCCR1B |= (1 << WGM12);   // CTC mode
  // TCCR1B |= ((1 << CS12) | (1 << CS10));  //1024 prescaler
