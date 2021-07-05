@@ -1,12 +1,17 @@
 #include <Arduino.h>
 #include <SMdriver.h>
 
+
+
+
 vector_control konstrct;
 
 
 
 int k1 = 0;// x os
 int k2 = 0; // y os
+
+
 
 const byte numChars = 32;    // varijable za primanje podataka na serijski port
 char receivedChars[numChars];
@@ -18,6 +23,8 @@ boolean newData = false;
 
 void setup() {
      
+
+
  konstrct.SetupZaBrojac();  // pozivanje funkcije za postavljanje tajmera
  Serial.begin(115200);      // pozivanje funkcije za serijsku komunikaciju
  Serial.setTimeout(20);     // vrijeme cekanja za primanje varijabli serijske komunikacije
@@ -96,7 +103,7 @@ k2 = atoi(brojY);  // integer ide do +-32768  možda bude potreban veći format 
 void loop() {
 
 recvWithStartEndMarkers();  //   <123 366>
- 
+
 }
 
 

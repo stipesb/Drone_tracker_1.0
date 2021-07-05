@@ -4,6 +4,10 @@
  Driver sadrži 3xTMC2208 drivera, arduino nano, regulator napona i zaštitu od obrnutog
 smjera struje
 */
+
+
+
+
 // definiranje pinova stepper modula
 #define Driver1Dir 4
 #define Driver1Step 5
@@ -26,7 +30,8 @@ vector_control::vector_control(){
 }
 vector_control::~vector_control(){
 }
-void vector_control::SetupZaBrojac(){     
+void vector_control::SetupZaBrojac(){  
+
 
   for(int i = 2; i<10; i++)  // postavljanje pinova 3-10 kao output
 {
@@ -87,18 +92,35 @@ brzina_y = -brzina_y;
 }
 
 
-
-brzina_x = 6000 - brzina_x*10;   // P regulator, najmanja brzina je 6000 impuls na motor svakih 30 000 us.
-brzina_y = 6000 - brzina_y*10;  // što je manji broj to je veća brzina
-
-if(brzina_x < 100 ) // prva zona sa manjim gainom, kad se dron nalazi 100piksela udaljen od centra
+if(brzina_x<100)  // fuzzy + proporcionalni regulator sa 3 zone ovo je osa gore dole
 {
-brzina_x = 30000 - brzina_x*100;
+
+brzina_x = 10000 - brzina_x*50;
+
 }
-else if(brzina_x<300)
+else if(brzina_x<180)
 {
-brzina_x = 10000 - brzina_x*10;
+  brzina_x = 5000 - brzina_x*20;
+}
+else if(brzina_x>180)
+{
+  brzina_x = 500;
+}
 
+
+if(brzina_y<100) // ovo je za osu lijevo desno
+{
+
+brzina_y = 10000 - brzina_y*50;
+
+}
+else if(brzina_y<220)
+{
+  brzina_y = 5000 - brzina_y*20;
+}
+else if(brzina_y>220)
+{
+  brzina_y = 500;
 }
 
 
@@ -109,7 +131,11 @@ brzina_x = 10000 - brzina_x*10;
  
 
 
-if(brzina_x<5700)  // ovo radi mrtvu zonu kad je dron centriran npr ako je dron 20pixela oko x osi, i ako uracunamo gain sa 89 linije koda
+
+
+
+
+if(brzina_x<9000)  // (fuzzy regulator) ovo radi mrtvu zonu kad je dron centriran npr ako je dron 20pixela oko x osi, i ako uracunamo gain sa 89 linije koda
                    // tako da dobijemo racunicu 6000 - 20*10  rezultat je 5800,    sa tim rezultatom if uvjet nije zadovoljen i gimbal se nece gibat
 {
 
@@ -124,7 +150,7 @@ timerx = 0;
 }
 
 
-if(brzina_y<5700)
+if(brzina_y<9000)
 {
 
 timery = timery+50;
@@ -155,7 +181,7 @@ delayMicroseconds(1000);
     digitalWrite(Driver1Step,HIGH);
      digitalWrite(Driver2Step,HIGH);
      digitalWrite(Driver3Step,HIGH);
-delayMicroseconds(10);
+delayMicroseconds(100);
 digitalWrite(Driver3Step,LOW);
      digitalWrite(Driver1Step,LOW);
      digitalWrite(Driver2Step,LOW);
