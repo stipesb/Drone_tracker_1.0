@@ -1,14 +1,19 @@
 #include <Arduino.h>
 #include <SMdriver.h>
 
+
+
+
 vector_control konstrct;
 
 
 
-int k1 = 0;// x os
-int k2 = 0; // y os
+int k1 = 0;  // varijabla položaja objekta   X os
+int k2 = 0;  // varijabla položaja objekta   Y os
 
-const byte numChars = 32;
+
+
+const byte numChars = 32;    // varijable za primanje podataka na serijski port
 char receivedChars[numChars];
 
 boolean newData = false;
@@ -18,12 +23,17 @@ boolean newData = false;
 
 void setup() {
      
- konstrct.SetupZaBrojac();
- Serial.begin(115200);
- Serial.setTimeout(20);
+
+
+ konstrct.SetupZaBrojac();  // pozivanje funkcije za postavljanje tajmera i pinova
+ Serial.begin(115200);      // pozivanje funkcije za serijsku komunikaciju
+ Serial.setTimeout(20);     // vrijeme cekanja za primanje varijabli serijske komunikacije
 
 }
-void recvWithStartEndMarkers() {    // ne radi jos kako treba
+
+void recvWithStartEndMarkers() {            // funkcija koja čita stringove koji su došli na serijski port
+                                            // u obliku < pozicija_po_X_osi, pozicija_po_Y_osi>
+
     static boolean recvInProgress = false;
     static byte ndx = 0;
     char startMarker = '<';
@@ -42,7 +52,7 @@ void recvWithStartEndMarkers() {    // ne radi jos kako treba
                 }
             }
             else {
-                receivedChars[ndx] = '\0'; // terminate the string
+                receivedChars[ndx] = '\0'; 
                 recvInProgress = false;
                 ndx = 0;
                 newData = true;
@@ -63,7 +73,7 @@ char brojY[33] = "";
 int t = 0;
 int kt = 0;
 
-for( int k = 0; k < 33; k++  )  // provjerava svaki element primljenog charasizeof(receivedChars)
+for( int k = 0; k < 33; k++  )          // provjerava svaki element primljenog "charasizeof(receivedChars)
 {                                             
     if(receivedChars[k]!= ' ' && t == 0)   // ako naidje na razmak, prebacuje char na drugu varijablu
     {                                      
@@ -79,14 +89,14 @@ brojX[k] = receivedChars[k];
      brojY[kt] = receivedChars[k];
      kt++;
     }
-      // ovaj kod gleda gdje je razmak u primljenom podatku, te ga u odnosu na taj razmak
-      // dijeli na 2 chara, char prije razmaka i char posle razmaka
+               // ovaj kod gleda gdje je razmak u primljenom podatku, te ga u odnosu na taj razmak
+               // dijeli na 2 chara, char prije razmaka i char posle razmaka
 
 
 }
 
-k1 = atoi(brojX);  // ova funkcija prebacuje char u integer
-k2 = atoi(brojY);  // integer ide do +-32768  možda bude potreban veći format broja (long)
+k1 = atoi(brojX);  // prebacivanje chara u integer
+k2 = atoi(brojY);  // integer ide do +-32768
   newData = false;
   }
 
@@ -95,14 +105,15 @@ k2 = atoi(brojY);  // integer ide do +-32768  možda bude potreban veći format 
 
 void loop() {
 
-recvWithStartEndMarkers();  //   <123 366>
- 
+recvWithStartEndMarkers();  //  prima broj poslan na serijski port,  u obliku <123, 366>
+
 }
 
 
 
-ISR(TIMER1_COMPA_vect)    //rutina koja poziva timer da pozove funkcije izmedju viticastih zagrada svako onoliko vremena koji je određen prescalerima      
-                          // timer compare interrupt service routine
+ISR(TIMER1_COMPA_vect)    //rutina koja se interruptom
+                          //funkcije izmedju viticastih se poziva frekvencijom određenom
+                          // usporednog registra, timer compare interrupt service routine
 {
 konstrct.tick(k2,k1);   
 }

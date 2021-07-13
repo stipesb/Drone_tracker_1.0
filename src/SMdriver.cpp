@@ -1,10 +1,16 @@
 #include "SMdriver.h"
-/*  Biblioteka za drive SMdriver za pokretanje 3 x stepper motora.
 
- Driver sadrži 3xTMC2208 drivera, arduino nano, regulator napona i zaštitu od obrnutog
-smjera struje
+/*  Biblioteka SMdriver koja kontrolira brzinu rotacije 3 koračna motora 
+
+ Driver sadrži 3xTMC2208 drivera, arduino nano i regulator napona 
+
 */
+
+
+
+
 // definiranje pinova stepper modula
+
 #define Driver1Dir 4
 #define Driver1Step 5
 
@@ -18,7 +24,7 @@ smjera struje
 #define MS2 3
 
 
-int a = 0;
+int a = 0;      // varijabla a
 int timerx = 0;
 int timery = 0;
 //////////////////////////////////////
@@ -26,7 +32,9 @@ vector_control::vector_control(){
 }
 vector_control::~vector_control(){
 }
-void vector_control::SetupZaBrojac(){     
+
+void vector_control::SetupZaBrojac(){  
+
 
   for(int i = 2; i<10; i++)  // postavljanje pinova 3-10 kao output
 {
@@ -45,49 +53,86 @@ delay(10);
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1  = 0;
-  OCR1A = 800;            // frekvencija interrupta 20kHz  50us,      (za svakih 20us  OCF1A = 319)
-                             //compare match register = [ 16,000,000Hz/ (prescaler * desired interrupt frequency) ] - 1
+  OCR1A = 800;          // frekvencija interrupta 20kHz  50us,      (za svakih 20us  OCF1A = 319)
+             // formula za usporedni registar = [ 16,000,000Hz/ (prescaler * željena frekvencija interupta) ] - 1
   TCCR1B |= (1 << WGM12);   // CTC mode
+
  // TCCR1B |= ((1 << CS12) | (1 << CS10));  //1024 prescaler
   
-  TCCR1B |= (1 << CS10);  // prescaler = 1, velika frekvencija timera
-  TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
-  interrupts();             // enable all interrupts
+  TCCR1B |= (1 << CS10);    // prescaler = 1, velika frekvencija timera
+  TIMSK1 |= (1 << OCIE1A);  // aktivira interupte usporednog registra
+  interrupts();             // aktivira interupte
 
 
-  
-  
+
 }
 void vector_control::klik(){
 
 }
 
 
-void vector_control::tick(int brzina_x, int brzina_y)  // ova funkcija se poziva svakih 50us
+void vector_control::tick(int brzina_y, int brzina_x)  // ova funkcija se poziva svakih 50us                 
 {  
+
 if(brzina_x >0)
+{
+digitalWrite(Driver2Dir,HIGH);  // postavlja dir pin u high ili low, ovisno u koju stranu ce se okretati motor
+}
+else
+{
+digitalWrite(Driver2Dir,LOW);   // prebacuje brzinu na pozitivan predznak, radi daljnjih funkcija
+brzina_x = -brzina_x;
+
+}
+
+
+
+if(brzina_y >0)
 {
 digitalWrite(Driver1Dir,LOW);  // postavlja dir pin u high ili low, ovisno u koju stranu ce se okretati motor
 }
 else
 {
 digitalWrite(Driver1Dir,HIGH);
-brzina_x = -brzina_x;              // prebacuje brzinu na pozitivan predznak, radi daljnjih funkcija
+brzina_y = -brzina_y;              // prebacuje brzinu na pozitivan predznak, radi daljnjih funkcija
 }
-if(brzina_y >0)
+
+
+
+if(brzina_x<100) // // fuzzy + proporcionalni regulator sa 3 zone za os lijevo/desno
 {
-digitalWrite(Driver2Dir,HIGH);
+
+brzina_x = 10000 - brzina_x*50;
 
 }
-else
+else if(brzina_x<220)
 {
-digitalWrite(Driver2Dir,LOW);
-
-brzina_y = -brzina_y;
+  brzina_x = 5000 - brzina_x*20;
+}
+else if(brzina_x>220)
+{
+  brzina_x = 500;
 }
 
-brzina_x = 6000 - brzina_x*10;   // P regulator, najmanja brzina je 6000 impuls na motor svakih 30 000 us.
-brzina_y = 6000 - brzina_y*10;
+
+
+
+
+if(brzina_y<100)  // fuzzy + proporcionalni regulator sa 3 zone za os gore/dolje
+{
+
+brzina_y = 10000 - brzina_y*50;
+
+}
+else if(brzina_y<180)
+{
+  brzina_y = 5000 - brzina_y*20;
+}
+else if(brzina_y>180)
+{
+  brzina_y = 500;
+}
+
 
 
 
@@ -97,33 +142,39 @@ brzina_y = 6000 - brzina_y*10;
  
 
 
-if(brzina_x<5700)  // ovo radi mrtvu zonu kad je dron centriran npr ako je dron 20pixela oko x osi, i ako uracunamo gain sa 89 linije koda
-                   // tako da dobijemo racunicu 6000 - 20*10  rezultat je 5800,    sa tim rezultatom if uvjet nije zadovoljen i gimbal se nece gibat
-{
+if(brzina_x<9000)   // ovaj uvjet zaustavlja manipulator kada se dron nalazi
+{                   // unutar mrtve zone.
 
-timerx = timerx+50;
+timerx = timerx+50;            // inkrement tajmera
 
-if(timerx>brzina_x)
+if(timerx>brzina_x)            //provjera uvjeta koliko je prošlo vremena od posljednjeg impulsa
 {
-digitalWrite(Driver1Step,HIGH);
-timerx = 0;
+digitalWrite(Driver2Step,HIGH);  // postavljanje impulsa na step pin
+
+timerx = 0;                      // nuliranje tajmera za ponovno inkrementiranje
+}
 }
 
-}
 
 
-if(brzina_y<5700)
+if(brzina_y<9000)  // (fuzzy regulator) ovo radi mrtvu zonu kad je dron centriran  
+                   //npr ako je dron 15 pixela oko y osi, i ako uracunamo gain
+                   // tako dobijemo racunicu 10000 - 15*50  rezultat je 9250, 
+                   //   sa tim rezultatom if uvjet nije zadovoljen i gimbal ce zaustaviti gibanje
 {
 
 timery = timery+50;
 
 if(timery>brzina_y)
 {
-digitalWrite(Driver2Step,HIGH);
-
+digitalWrite(Driver1Step,HIGH);
 timery = 0;
 }
+
 }
+
+
+
 
 
 }
@@ -143,7 +194,7 @@ delayMicroseconds(1000);
     digitalWrite(Driver1Step,HIGH);
      digitalWrite(Driver2Step,HIGH);
      digitalWrite(Driver3Step,HIGH);
-delayMicroseconds(10);
+delayMicroseconds(100);
 digitalWrite(Driver3Step,LOW);
      digitalWrite(Driver1Step,LOW);
      digitalWrite(Driver2Step,LOW);
