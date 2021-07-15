@@ -100,6 +100,11 @@ brzina_y = -brzina_y;              // prebacuje brzinu na pozitivan predznak, ra
 
 
 if(brzina_x<100) // // fuzzy + proporcionalni regulator sa 3 zone za os lijevo/desno
+                 // ako se želi ubrzati/usporiti brzina rotacije sustava, mijenjaju se parametri
+                 // u linijama koda koje se nalaze ispod...
+                // brzina_x = 10000 - brzina_x*50;    
+                //broj  10000 označava najsporiju brzinu sustava 
+                // broj 50 je proporcionalni član regulacije
 {
 
 brzina_x = 10000 - brzina_x*50;
@@ -123,14 +128,19 @@ if(brzina_y<100)  // fuzzy + proporcionalni regulator sa 3 zone za os gore/dolje
 
 brzina_y = 10000 - brzina_y*50;
 
+
 }
 else if(brzina_y<180)
 {
   brzina_y = 5000 - brzina_y*20;
+  
+
 }
 else if(brzina_y>180)
 {
-  brzina_y = 500;
+ brzina_y = 500;  // ovdje se nalazi maksimalna brzina rotacije. Ne ići ispod 200!
+
+
 }
 
 
